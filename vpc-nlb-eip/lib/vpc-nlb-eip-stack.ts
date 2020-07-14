@@ -1,6 +1,7 @@
 import * as cdk from "@aws-cdk/core"
 import * as ec2 from "@aws-cdk/aws-ec2"
-import { NetworkLoadBalancer } from "@aws-cdk/aws-elasticloadbalancingv2"
+// import { NetworkLoadBalancer } from "@aws-cdk/aws-elasticloadbalancingv2"
+// import { NetworkLoadBalancerStatic } from "./cdk-nlb-static"
 
 export class VpcNlbEipStack extends cdk.Stack {
     constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -26,19 +27,23 @@ export class VpcNlbEipStack extends cdk.Stack {
         })
 
         // NLB
-        const nlb = new NetworkLoadBalancer(this, "NLB", {
-            vpc: vpc,
-            loadBalancerName: "NLB",
-            crossZoneEnabled: true,
-            deletionProtection: false,
-            internetFacing: true,
-        })
+        // const nlb = new NetworkLoadBalancerStatic(this, "NLB", {
+        //   subnetList: vpc.publicSubnets
+        // })
+
+        // const nlb = new NetworkLoadBalancer(this, "NLB", {
+        //     vpc: vpc,
+        //     loadBalancerName: "NLB",
+        //     crossZoneEnabled: true,
+        //     deletionProtection: false,
+        //     internetFacing: true,
+        // })
 
         // Create the EIPs for the NLB
-        for (let i = 0; i < vpc.availabilityZones.length; i++) {
-          nlb.node
-        }
-          console.log("AZs:", vpc.availabilityZones.length)
-        }
+        // for (let i = 0; i < vpc.availabilityZones.length; i++) {
+        //   nlb.node
+        // }
+        //   console.log("AZs:", vpc.availabilityZones.length)
+        // }
     }
 }

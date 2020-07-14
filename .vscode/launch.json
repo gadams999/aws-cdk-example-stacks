@@ -1,20 +1,17 @@
 {
     "version": "0.2.0",
     "configurations": [
-
         {
-        "type": "node",
-        "request": "launch",
-        "name": "Launch VPC-NLB-EIP,
-        "skipFiles": [
-            "<node_internals>/**"
-        ],
-        "runtimeArgs": [
-            "-r", "./node_modules/ts-node/register/transpile-only"
-        ],
-        "args": [
-            "${workspaceFolder}/vpc-nlb-eip/bin/vpc-nlb-eip.ts"
-        ]
+            "type": "node",
+            "request": "launch",
+            "name": "Launch VPC-NLB-EIP",
+            "skipFiles": ["<node_internals>/**"],
+            "cwd": "${workspaceFolder}/vpc-nlb-eip"
+            "runtimeArgs": [
+                "-r",
+                "./node_modules/ts-node/register/transpile-only"
+            ],
+            "args": ["${workspaceFolder}/vpc-nlb-eip/bin/vpc-nlb-eip.ts"]
         }
     ]
 }
