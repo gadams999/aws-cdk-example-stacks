@@ -38,11 +38,11 @@ export class VpcNlbEipStack extends cdk.Stack {
       targetType: TargetType.INSTANCE,
       vpc: vpc,
     });
-
+    // Create a listener to forward traffic (to TargetGroup defined later)
     const listener = new CfnListener(this, "WEBTRAFFIC", {
       loadBalancerArn: nlb.arn,
       port: 80,
-      protocol: "TCP",
+      protocol: Protocol.TCP,
       defaultActions: [{ type: "forward", targetGroupArn: tg.targetGroupArn }],
     });
 
@@ -59,7 +59,12 @@ export class VpcNlbEipStack extends cdk.Stack {
      * Below is an example to create an NLB listener -> target group -> ASG -> Instances
      */
 
-    // UserData for the ASG launch config. will be executed once per-instance startup
+    /**
+     * UserData for the ASG launch config. will be executed once per-instance startup
+     * this installs Apache HTTPD and starts the service. NOTE: it does not enable for startup,
+     * so you can test stopping the service and see the autoscaling group replace the instance
+     * based on health checks
+     */
     let commands = `#!/bin/bash -xe
 yum update && yum upgrade -y
 yum install httpd -y
@@ -71,16 +76,16 @@ systemctl start httpd
     // Since the NLB will present the original IP address, set inbound to
     // proper ipv4/v6 scopes.
     const sg = new ec2.SecurityGroup(this, "Instance SG", {
-      description: "All Load balancer to instance",
+      description: "Autoscaling security group",
       vpc: vpc,
     });
     sg.addIngressRule(
       ec2.Peer.ipv4("0.0.0.0/0"),
       ec2.Port.tcp(80),
-      "HTTP incoming"
+      "Allow access to HTTP from anywhere"
     );
 
-    // Create the ASG with t3.medium instances, AL2, and honor the NLB's 
+    // Create the ASG with t3.medium instances, AL2, and honor the NLB's
     // target group health checks along with normal ec2 health checks.
     const asg = new AutoScalingGroup(this, "AutoscalingGroup", {
       instanceType: ec2.InstanceType.of(
@@ -93,12 +98,13 @@ systemctl start httpd
       }),
       desiredCapacity: 2,
       healthCheck: {
-          type: "ELB",
-          gracePeriod: cdk.Duration.seconds(30)
+        type: "ELB",
+        gracePeriod: cdk.Duration.seconds(30),
       },
       userData: userData,
       securityGroup: sg,
     });
+    
     // Enable the automatic management via Systems Manager
     // by adding the policy to the instance role. Add other
     // AWS services these instances should monitor.

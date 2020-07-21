@@ -83,17 +83,6 @@ export class NetworkLoadBalancerStatic extends cdk.Construct {
      * to disassociate the EIP's from the NLB.
      * 
      * TODO: create the custom resource.
-     */
-    
-  }
-
-  public addListener(id: string, port: number, protocol: string) {
-    const listener = new CfnListener(this, id, {
-      loadBalancerArn: this.arn,
-      port: port,
-      protocol: protocol,
-      defaultActions: [{ type: "forward" }],
-    });
-    this.listeners.push(listener);
+     */  
   }
 }
