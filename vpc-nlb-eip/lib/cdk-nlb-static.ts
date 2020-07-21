@@ -24,13 +24,6 @@ export interface NetworkLoadBalancerStaticProps {
   readonly vpc: ec2.Vpc;
 }
 
-export interface ListenerProps {
-  /**
-   * Create listener for UDP, TCP, etc. and port
-   */
-  readonly props: NetworkListenerProps;
-}
-
 export class NetworkLoadBalancerStatic extends cdk.Construct {
   eipArray: ec2.CfnEIP[] = [];
   nlb: CfnLoadBalancer;
